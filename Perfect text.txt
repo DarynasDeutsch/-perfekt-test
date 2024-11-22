@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfekt-Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #game {
+            margin-top: 20px;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .hidden {
+            display: none;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Perfekt-Test im Deutschen</h1>
+    <div id="game">
+        <p id="question"></p>
+        <div id="options"></div>
+        <p id="progress">Frage 1 von 20</p>
+        <p id="score">Punkte: 0</p>
+    </div>
+    <p id="endMessage" class="hidden"></p>
+    <button id="restart" class="hidden" onclick="restartGame()">Spiel neu starten</button>
+
+    <script>
+        const questions = [
+            {
+                question: "Welche Form ist korrekt? (ich / gehen)",
+                options: ["Ich habe gegangen.", "Ich bin gegangen.", "Ich ging."],
+                answer: "Ich bin gegangen."
+            },
+            {
+                question: "Welche Form ist korrekt? (er / arbeiten)",
+                options: ["Er hat gearbeitet.", "Er ist gearbeitet.", "Er arbeitet."],
+                answer: "Er hat gearbeitet."
+            },
+            {
+                question: "Welche Form ist korrekt? (wir / fahren)",
+                options: ["Wir sind gefahren.", "Wir haben gefahren.", "Wir fahren."],
+                answer: "Wir sind gefahren."
+            },
+            {
+                question: "Welche Form ist korrekt? (du / essen)",
+                options: ["Du hast gegessen.", "Du bist gegessen.", "Du isst."],
+                answer: "Du hast gegessen."
+            },
+            {
+                question: "Welche Form ist korrekt? (sie / tanzen)",
+                options: ["Sie hat getanzt.", "Sie ist getanzt.", "Sie tanzte."],
+                answer: "Sie hat getanzt."
+            },
+            {
+                question: "Welche Form ist korrekt? (ich / kommen)",
+                options: ["Ich bin gekommen.", "Ich habe gekommen.", "Ich kam."],
+                answer: "Ich bin gekommen."
+            },
+            {
+                question: "Welche Form ist korrekt? (er / schreiben)",
+                options: ["Er hat geschrieben.", "Er ist geschrieben.", "Er schrieb."],
+                answer: "Er hat geschrieben."
+            },
+            {
+                question: "Welche Form ist korrekt? (wir / schwimmen)",
+                options: ["Wir sind geschwommen.", "Wir haben geschwommen.", "Wir schwammen."],
+                answer: "Wir sind geschwommen."
+            },
+            {
+                question: "Welche Form ist korrekt? (sie / sprechen)",
+                options: ["Sie hat gesprochen.", "Sie ist gesprochen.", "Sie sprach."],
+                answer: "Sie hat gesprochen."
+            },
+            {
+                question: "Welche Form ist korrekt? (du / laufen)",
+                options: ["Du bist gelaufen.", "Du hast gelaufen.", "Du liefst."],
+                answer: "Du bist gelaufen."
+            },
+            {
+                question: "Welche Form ist korrekt? (ich / singen)",
+                options: ["Ich habe gesungen.", "Ich bin gesungen.", "Ich sang."],
+                answer: "Ich habe gesungen."
+            },
+            {
+                question: "Welche Form ist korrekt? (sie / lesen)",
+                options: ["Sie hat gelesen.", "Sie ist gelesen.", "Sie las."],
+                answer: "Sie hat gelesen."
+            },
+            {
+                question: "Welche Form ist korrekt? (er / trinken)",
+                options: ["Er hat getrunken.", "Er ist getrunken.", "Er trank."],
+                answer: "Er hat getrunken."
+            },
+            {
+                question: "Welche Form ist korrekt? (wir / rennen)",
+                options: ["Wir sind gerannt.", "Wir haben gerannt.", "Wir rannten."],
+                answer: "Wir sind gerannt."
+            },
+            {
+                question: "Welche Form ist korrekt? (sie / bleiben)",
+                options: ["Sie ist geblieben.", "Sie hat geblieben.", "Sie blieb."],
+                answer: "Sie ist geblieben."
+            },
+            {
+                question: "Welche Form ist korrekt? (ich / sagen)",
+                options: ["Ich habe gesagt.", "Ich bin gesagt.", "Ich sagte."],
+                answer: "Ich habe gesagt."
+            },
+            {
+                question: "Welche Form ist korrekt? (er / finden)",
+                options: ["Er hat gefunden.", "Er ist gefunden.", "Er fand."],
+                answer: "Er hat gefunden."
+            },
+            {
+                question: "Welche Form ist korrekt? (du / schlafen)",
+                options: ["Du hast geschlafen.", "Du bist geschlafen.", "Du schliefst."],
+                answer: "Du hast geschlafen."
+            },
+            {
+                question: "Welche Form ist korrekt? (wir / verlieren)",
+                options: ["Wir haben verloren.", "Wir sind verloren.", "Wir verloren."],
+                answer: "Wir haben verloren."
+            },
+            {
+                question: "Welche Form ist korrekt? (sie / fliegen)",
+                options: ["Sie ist geflogen.", "Sie hat geflogen.", "Sie flog."],
+                answer: "Sie ist geflogen."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            document.getElementById("question").innerText = currentQuestion.question;
+
+            const optionsDiv = document.getElementById("options");
+            optionsDiv.innerHTML = "";
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(button);
+            });
+
+            document.getElementById("progress").innerText = `Frage ${currentQuestionIndex + 1} von 20`;
+            document.getElementById("score").innerText = `Punkte: ${score}`;
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedOption === currentQuestion.answer) {
+                score += 1;
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById("game").classList.add("hidden");
+            const endMessage = document.getElementById("endMessage");
+            endMessage.classList.remove("hidden");
+            endMessage.innerText = `Spiel beendet! Du hast ${score} von 20 Punkten erreicht.`;
+
+            document.getElementById("restart").classList.remove("hidden");
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById("game").classList.remove("hidden");
+            document.getElementById("endMessage").classList.add("hidden");
+            document.getElementById("restart").classList.add("hidden");
+            showQuestion();
+        }
+
+        showQuestion();
+    </script>
+</body>
+</html>
